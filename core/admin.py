@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group as DjangoGroup
 # Импортируем наши новые модели Lesson и Attendance
-from .models import Lead, Student, Teacher, Group, Lesson, Attendance, Tariff, Payment
+from .models import Lead, Student, Teacher, Group, Lesson, Attendance, Tariff, Payment, Task
 
 # --- ВНУТРЕННИЕ ТАБЛИЦЫ (INLINES) ---
 class AttendanceInline(admin.TabularInline):
@@ -68,3 +68,16 @@ class PaymentAdmin(admin.ModelAdmin):
     #     return False
     # def has_change_permission(self, request, obj=None):
     #     return False
+
+@admin.register(Task)
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ('title', 'assigned_to', 'deadline', 'priority', 'status')
+    list_filter = ('status', 'priority', 'assigned_to')
+    search_fields = ('title',)
+    list_editable = ('status',) # Можно менять статус (Галочку) прямо в списке
+    
+    # Красим строки в зависимости от срочности (Фишка!)
+    def get_row_css(self, obj, index):
+        if obj.priority == 'high':
+            return 'red-row'
+        return ''    

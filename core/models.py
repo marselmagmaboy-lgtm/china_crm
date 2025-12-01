@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 # --- СПРАВОЧНИКИ ---
 
@@ -236,4 +237,41 @@ class Payment(models.Model):
             if self.student.student_status != 'active':
                 self.student.student_status = 'active'
             
-            self.student.save()                   
+            self.student.save()       
+
+            # --- ЗАДАЧИ И НАПОМИНАНИЯ ---
+
+from django.contrib.auth.models import User # Импортируем пользователей системы
+
+class Task(models.Model):
+    """
+    Задачи для сотрудников (CRM внутри CRM)
+    """
+    PRIORITY_CHOICES = [
+        ('low', '🟢 Низкий'),
+        ('medium', '🟡 Средний'),
+        ('high', '🔴 Высокий (Срочно!)'),
+    ]
+    STATUS_CHOICES = [
+        ('new', 'Новая'),
+        ('in_progress', 'В работе'),
+        ('done', '✅ Выполнено'),
+    ]
+
+    title = models.CharField("Что сделать?", max_length=200)
+    description = models.TextField("Подробное описание", blank=True)
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Исполнитель", related_name="tasks")
+    deadline = models.DateTimeField("Крайний срок", null=True, blank=True)
+    priority = models.CharField("Важность", max_length=10, choices=PRIORITY_CHOICES, default='medium')
+    status = models.CharField("Статус", max_length=20, choices=STATUS_CHOICES, default='new')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Задача"
+        verbose_name_plural = "Задачи сотрудникам"
+        ordering = ['status', '-priority'] # Сначала невыполненные и важные
+
+    def __str__(self):
+        # Было: return f"{self.title} ({self.get_assigned_to_display()})" <-- ОШИБКА ЗДЕСЬ
+        # Стало:
+        return f"{self.title} ({self.assigned_to})"     

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -125,45 +126,68 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LANGUAGE_CODE = 'ru-ru'
+# Подключаем функцию перевода
+from django.utils.translation import gettext_lazy as _
+
+# Какие языки будут в меню
+LANGUAGES = [
+    ('ru', 'Русский'),
+    ('en', 'English'),
+    ('zh-hans', 'Chinese'), # Китайский упрощенный
+    ('uz', 'Uzbek'),        # Узбекский
+]
+
+# Включаем систему перевода
+USE_I18N = True
+USE_L10N = True
 TIME_ZONE = 'Asia/Tashkent' 
 
 JAZZMIN_SETTINGS = {
+    
     "site_title": "China CRM",
     "site_header": "China Center",
     "site_brand": "Система Управления",
     "welcome_sign": "Привет! Работаем.",
     "copyright": "China Center",
-    "search_model": "core.Student", # Строка поиска сразу ищет студентов
+    "search_model": "core.Student",
 
-    # МЕНЮ (Порядок отображения)
+    # МЕНЮ
     "topmenu_links": [
         {"name": "Открыть сайт", "url": "/", "new_window": True},
     ],
-    "order_with_respect_to": ["core.Lead", "core.Student", "core.Group", "core.Teacher"], # Сначала Лиды, потом Студенты
+    "order_with_respect_to": ["core.Lead", "core.Student", "core.Group", "core.Teacher"],
 
-    # ИКОНКИ (Красивые значки)
+    # ИКОНКИ
     "icons": {
         "auth": "fas fa-users-cog",
         "core.Lead": "fas fa-fire",             
         "core.Student": "fas fa-user-graduate", 
         "core.Teacher": "fas fa-chalkboard-teacher", 
         "core.Group": "fas fa-users",           
+        # Добавим иконку для новых Задач, раз уж мы здесь
+        "core.Task": "fas fa-tasks",
     },
     "default_icon_parents": "fas fa-circle",
     "default_icon_children": "fas fa-dot-circle",
     
-    # Скрываем кнопку "Пользователи" из бокового меню (чтобы не мешала)
     "hide_apps": ["auth"], 
+    
+    # --- ВОТ ЭТА НОВАЯ СТРОЧКА ---
+    "language_chooser": True,
 }
 
-# ДИЗАЙН (Светлая, чистая тема)
 JAZZMIN_UI_TWEAKS = {
-    "theme": "flatly",        # Самая чистая и современная тема (Flat Design)
-    # Варианты на пробу: "journal", "simplex", "spacelab"
+    "theme": "darkly",  # <--- ТЕМНАЯ ТЕМА (Попробуй также "cyborg" или "slate", если эта не зайдет)
+    # "theme": "flatly", # (Раскомментируй эту строку и закомментируй верхнюю, если захочешь вернуть светлую)
     
-    "navbar": "navbar-white navbar-light", # Светлая шапка
-    "sidebar": "sidebar-light-primary",    # Светлое боковое меню (было темное)
-    "accent": "accent-primary",            # Синий акцент на активных элементах
+    "dark_mode_theme": "darkly",
+    
+    # Настройки меню
+    "navbar": "navbar-dark",
+    "sidebar": "sidebar-dark-primary",
+    "accent": "accent-primary",
+    
+    # Кнопки
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
