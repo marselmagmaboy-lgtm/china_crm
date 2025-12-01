@@ -15,10 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include # <--- 1. Добавь сюда include
+from django.urls import path, include
+from core.views import lead_chat  # <--- 1. Импортируем нашу функцию чата
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # 2. ВАЖНО: Ставим ссылку на чат ПЕРЕД стандартной админкой!
+    # Джанго сначала проверит: "Это чат?", и если да — откроет его.
+    path('admin/chat/<int:lead_id>/', lead_chat, name='lead_chat'),
 
+    # Стандартная админка
+    path('admin/', admin.site.urls),
+    
+    # Перевод языков
     path('i18n/', include('django.conf.urls.i18n')),
 ]

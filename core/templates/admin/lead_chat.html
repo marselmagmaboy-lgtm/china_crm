@@ -1,0 +1,61 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div style="display: flex; gap: 20px; height: 80vh;">
+    
+    <div style="flex: 2; display: flex; flex-direction: column; background: #1e1e1e; border-radius: 10px; padding: 20px;">
+        <h2 style="color: white;">Чат с {{ lead.first_name }}</h2>
+        
+        <div style="flex: 1; overflow-y: auto; margin-bottom: 20px; padding-right: 10px; display: flex; flex-direction: column; gap: 10px;" id="chat-window">
+            {% for msg in messages %}
+                <div style="max-width: 70%; padding: 10px; border-radius: 10px; 
+                            {% if msg.is_from_manager %}
+                                align-self: flex-end; background-color: #0056b3; color: white;
+                            {% else %}
+                                align-self: flex-start; background-color: #333; color: #ddd;
+                            {% endif %}">
+                    <strong>{% if msg.is_from_manager %}Вы{% else %}{{ lead.first_name }}{% endif %}:</strong><br>
+                    {{ msg.text }}
+                    <div style="font-size: 0.7em; opacity: 0.7; text-align: right;">{{ msg.created_at|date:"H:i" }}</div>
+                </div>
+            {% empty %}
+                <p style="text-align: center; color: gray;">Истории сообщений пока нет.</p>
+            {% endfor %}
+        </div>
+
+        <form method="POST" style="display: flex; gap: 10px;">
+            {% csrf_token %}
+            <input type="text" name="message_text" placeholder="Введите сообщение..." required style="flex: 1; padding: 10px; border-radius: 5px; border: none;">
+            <button type="submit" class="btn btn-success">Отправить ✈️</button>
+        </form>
+    </div>
+
+    <div style="flex: 1; background: #2c2c2c; padding: 20px; border-radius: 10px; color: white;">
+        <h3>📝 Данные Лида</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="update_lead" value="true">
+            
+            <label>Имя / Никнейм:</label>
+            <input type="text" name="first_name" value="{{ lead.first_name }}" style="width: 100%; margin-bottom: 10px; padding: 5px;">
+            
+            <label>Комментарий / Цель:</label>
+            <textarea name="manager_comment" rows="10" style="width: 100%; padding: 5px;">{{ lead.manager_comment }}</textarea>
+            
+            <br><br>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">💾 Сохранить данные</button>
+        </form>
+
+        <hr style="border-color: #555;">
+        <p>Telegram: @{{ lead.telegram_username }}</p>
+        <p>Статус: {{ lead.get_status_display }}</p>
+        <a href="/admin/core/lead/{{ lead.id }}/change/" style="color: #4facfe;">Открыть полную карточку -></a>
+    </div>
+
+</div>
+
+<script>
+    var chatWindow = document.getElementById("chat-window");
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+</script>
+{% endblock %}
