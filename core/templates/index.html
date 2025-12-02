@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSRE | New Silk Road Education</title>
+    <style>
+        :root {
+            --primary: #ff4b4b; /* Яркий красный */
+            --dark: #121212;
+            --card-bg: #1e1e1e;
+            --text: #f4f4f4;
+            --gray: #aaa;
+        }
+
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: var(--dark); color: var(--text); line-height: 1.6; }
+
+        /* HEADER */
+        header {
+            position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(18, 18, 18, 0.9); backdrop-filter: blur(10px); z-index: 1000; box-sizing: border-box; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .logo { font-size: 24px; font-weight: 800; color: white; letter-spacing: 2px; text-transform: uppercase; }
+        .logo span { color: var(--primary); }
+        .logo small { display: block; font-size: 10px; font-weight: 400; color: var(--gray); letter-spacing: 1px; margin-top: -5px; }
+        
+        .nav { display: flex; gap: 30px; align-items: center; }
+        .nav a { color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.3s; }
+        .nav a:hover { color: var(--primary); }
+        .nav-btn { background: var(--primary); padding: 8px 20px; border-radius: 20px; color: white !important; }
+
+        /* HERO SECTION */
+        .hero {
+            height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;
+            background: linear-gradient(180deg, rgba(18,18,18,0.7) 0%, rgba(18,18,18,1) 100%), 
+                        url('https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover; background-position: center;
+        }
+        .hero-content { max-width: 900px; padding: 20px; animation: fadeIn 1.5s ease; }
+        h1 { font-size: 58px; margin: 0 0 20px 0; line-height: 1.1; font-weight: 800; text-transform: uppercase; }
+        p.subtitle { font-size: 22px; color: var(--gray); margin-bottom: 40px; font-weight: 300; }
+        
+        .btn-main {
+            display: inline-block; background-color: var(--primary); color: white; border: none; padding: 18px 50px; 
+            font-size: 18px; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.3s; text-decoration: none;
+            box-shadow: 0 10px 30px rgba(255, 75, 75, 0.3);
+        }
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(255, 75, 75, 0.5); }
+
+        /* FEATURES SECTION */
+        .section { padding: 100px 10%; }
+        .section-title { text-align: center; font-size: 36px; margin-bottom: 60px; font-weight: bold; }
+        .section-title span { border-bottom: 3px solid var(--primary); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        
+        .card {
+            background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        .icon { font-size: 40px; margin-bottom: 20px; }
+        .card h3 { margin: 0 0 15px 0; font-size: 22px; }
+        .card p { color: var(--gray); font-size: 15px; margin: 0; }
+
+        /* FORM SECTION */
+        .form-container {
+            background: linear-gradient(145deg, #1a1a1a, #222); padding: 60px; border-radius: 30px; 
+            max-width: 600px; margin: 0 auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);
+        }
+        input {
+            width: 100%; padding: 20px; margin-bottom: 20px; background: rgba(255,255,255,0.05); border: 1px solid transparent;
+            border-radius: 15px; color: white; font-size: 16px; box-sizing: border-box; transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); outline: none; background: rgba(255,255,255,0.1); }
+        
+        .success-msg { background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 30px; }
+
+        /* FOOTER */
+        footer { padding: 50px 10%; background: #000; text-align: center; color: #555; font-size: 14px; margin-top: 100px; }
+
+        /* MOBILE ADAPTIVE */
+        @media (max-width: 768px) {
+            h1 { font-size: 36px; }
+            .nav { display: none; } /* Скрываем меню на телефоне для простоты */
+            .section { padding: 60px 5%; }
+            .form-container { padding: 30px; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        NSRE<span>.</span>
+        <small>New Silk Road Education</small>
+    </div>
+    <nav class="nav">
+        <a href="#features">Преимущества</a>
+        <a href="#levels">Программа</a>
+        <a href="#contact" class="nav-btn">Записаться</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>New Silk Road <br><span style="color: var(--primary);">Education</span></h1>
+        <p class="subtitle">Изучение китайского языка с погружением в культуру. От HSK 1 до поступления в ВУЗы Китая.</p>
+        <a href="#contact" class="btn-main">Записаться на пробный урок</a>
+    </div>
+</section>
+
+<section id="features" class="section">
+    <div class="section-title"><span>Почему выбирают NSRE</span></div>
+    <div class="grid">
+        <div class="card">
+            <div class="icon">🧧</div>
+            <h3>Опытные наставники</h3>
+            <p>Преподаватели, прожившие в Китае более 5 лет. Носители языка для продвинутых групп.</p>
+        </div>
+        <div class="card">
+            <div class="icon">🚀</div>
+            <h3>Гарантия результата</h3>
+            <p>Мы готовим к сдаче HSK. 98% наших студентов успешно сдают экзамены с первого раза.</p>
+        </div>
+        <div class="card">
+            <div class="icon">🏮</div>
+            <h3>Атмосфера</h3>
+            <p>Не просто уроки. Чайные церемонии, каллиграфия и разговорные клубы каждую неделю.</p>
+        </div>
+    </div>
+</section>
+
+<section id="levels" class="section">
+    <div class="section-title"><span>Программа обучения</span></div>
+    <div class="grid">
+        <div class="card" style="border-left: 5px solid #4facfe;">
+            <h3>Начальный (HSK 1-2)</h3>
+            <p>Постановка произношения, базовые иероглифы, простые диалоги.</p>
+        </div>
+        <div class="card" style="border-left: 5px solid #00f2fe;">
+            <h3>Средний (HSK 3-4)</h3>
+            <p>Свободное общение, чтение текстов, подготовка к учебе в Китае.</p>
+        </div>
+        <div class="card" style="border-left: 5px solid #ff4b4b;">
+            <h3>Профи (HSK 5-6)</h3>
+            <p>Деловой китайский, чтение литературы, просмотр фильмов в оригинале.</p>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="section">
+    <div class="section-title"><span>Начни обучение в NSRE</span></div>
+    
+    <div class="form-container">
+        {% if success %}
+            <div class="success-msg">
+                ✅ <strong>Ваша заявка принята!</strong><br>
+                Менеджер NSRE свяжется с вами в ближайшее время.
+            </div>
+        {% endif %}
+
+        <form method="POST" action="/#contact">
+            {% csrf_token %}
+            <div style="text-align: center; margin-bottom: 30px; color: #ccc;">
+                Оставьте свои контакты, и мы пригласим вас на бесплатное тестирование
+            </div>
+            
+            <input type="text" name="first_name" placeholder="Как вас зовут?" required>
+            <input type="tel" name="phone" placeholder="Ваш телефон (+998...)" required>
+            
+            <button type="submit" class="btn-main" style="width: 100%; border-radius: 15px;">Отправить заявку</button>
+        </form>
+    </div>
+</section>
+
+<footer>
+    © 2025 New Silk Road Education (NSRE). Все права защищены.<br>
+    <span style="opacity: 0.3; font-size: 10px;">CRM System v1.0</span>
+</footer>
+
+</body>
+</html>

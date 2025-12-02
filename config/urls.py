@@ -1,31 +1,14 @@
-"""
-URL configuration for config project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
-from core.views import lead_chat  # <--- 1. Импортируем нашу функцию чата
+from core.views import chat_dashboard, index
 
 urlpatterns = [
-    # 2. ВАЖНО: Ставим ссылку на чат ПЕРЕД стандартной админкой!
-    # Джанго сначала проверит: "Это чат?", и если да — откроет его.
-    path('admin/chat/<int:lead_id>/', lead_chat, name='lead_chat'),
+    # ГЛАВНАЯ СТРАНИЦА (Сайт)
+    path('', index, name='index'),  # <--- Пустые кавычки = корень сайта
 
-    # Стандартная админка
+    # ЧАТ И АДМИНКА
+    path('admin/chat/', chat_dashboard, name='chat_index'),
+    path('admin/chat/<int:lead_id>/', chat_dashboard, name='chat_dashboard'),
     path('admin/', admin.site.urls),
-    
-    # Перевод языков
     path('i18n/', include('django.conf.urls.i18n')),
 ]

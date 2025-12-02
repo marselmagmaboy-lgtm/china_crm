@@ -32,7 +32,7 @@ class LeadAdmin(admin.ModelAdmin):
 
     # Кнопка для перехода в чат
     def open_chat_link(self, obj):
-        url = reverse('lead_chat', args=[obj.id])
+        url = reverse('chat_dashboard', args=[obj.id]) 
         return format_html('<a class="button" href="{}" style="background-color:#28a745; color:white; padding:5px 10px; border-radius:5px;">💬 Чат</a>', url)
     
     open_chat_link.short_description = "Переписка"
