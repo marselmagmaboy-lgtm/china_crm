@@ -3,184 +3,633 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NSRE | New Silk Road Education</title>
+    <title>NSRE | Центр китайского языка нового поколения</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --primary: #ff4b4b; /* Яркий красный */
-            --dark: #121212;
-            --card-bg: #1e1e1e;
-            --text: #f4f4f4;
-            --gray: #aaa;
+            --primary: #e60012; 
+            --primary-dark: #b3000e;
+            --accent: #ff914d;
+            --dark: #050505;
+            --dark-sec: #0f0f0f;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-strong: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text: #ffffff;
+            --text-gray: #b0b0b0;
+            --section-spacing: 120px;
         }
 
         html { scroll-behavior: smooth; }
-        body { margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: var(--dark); color: var(--text); line-height: 1.6; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background-color: var(--dark); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+        
+        /* ЖИВОЙ ФОН */
+        .background-blobs {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none;
+        }
+        .blob {
+            position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.3;
+            animation: moveBlob 25s infinite alternate ease-in-out;
+        }
+        .blob-1 { top: -20%; left: -20%; width: 600px; height: 600px; background: #ff00cc; animation-duration: 30s; }
+        .blob-2 { bottom: -20%; right: -20%; width: 700px; height: 700px; background: var(--primary); animation-duration: 35s; animation-delay: -5s; }
+        .blob-3 { top: 50%; left: 50%; width: 500px; height: 500px; background: #0051ff; animation-duration: 40s; opacity: 0.2; transform: translate(-50%, -50%); }
+
+        @keyframes moveBlob { from { transform: translate(0, 0) scale(1); } to { transform: translate(80px, -80px) scale(1.1); } }
+
+        /* УТИЛИТЫ */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .text-accent { color: var(--primary); }
+        .text-gradient { background: linear-gradient(90deg, #ff4b4b, #ff914d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hidden-op { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+        .show-op { opacity: 1; transform: translateY(0); }
+
+        /* КНОПКИ */
+        .btn-main {
+            display: inline-block; width: auto; padding: 16px 45px; text-decoration: none;
+            background: var(--primary); color: white; font-size: 16px; font-weight: 700; cursor: pointer; border-radius: 50px;
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; border: none; position: relative; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(230, 0, 18, 0.3);
+        }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 20px 50px rgba(230, 0, 18, 0.5); background: var(--primary-dark); }
 
         /* HEADER */
         header {
-            position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(18, 18, 18, 0.9); backdrop-filter: blur(10px); z-index: 1000; box-sizing: border-box; border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: fixed; top: 0; width: 100%; padding: 15px 0; 
+            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(25px);
+            z-index: 1000; border-bottom: 1px solid var(--glass-border); transition: 0.3s;
         }
-        .logo { font-size: 24px; font-weight: 800; color: white; letter-spacing: 2px; text-transform: uppercase; }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; line-height: 1; }
         .logo span { color: var(--primary); }
-        .logo small { display: block; font-size: 10px; font-weight: 400; color: var(--gray); letter-spacing: 1px; margin-top: -5px; }
-        
+        .logo small { display: block; font-size: 8px; font-weight: 500; letter-spacing: 4px; margin-top: 5px; color: var(--text-gray); }
+
         .nav { display: flex; gap: 30px; align-items: center; }
-        .nav a { color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.3s; }
+        .nav a { color: var(--text); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; transition: 0.3s; letter-spacing: 1px; }
         .nav a:hover { color: var(--primary); }
-        .nav-btn { background: var(--primary); padding: 8px 20px; border-radius: 20px; color: white !important; }
+        
+        .lang-switch { display: flex; gap: 5px; background: var(--glass); padding: 4px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .lang-btn { cursor: pointer; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 15px; transition: 0.3s; opacity: 0.6; }
+        .lang-btn.active { opacity: 1; background: var(--primary); color: white; }
 
-        /* HERO SECTION */
+        /* HERO SECTION (ИСПРАВЛЕНО ЦЕНТРИРОВАНИЕ) */
         .hero {
-            height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative;
-            background: linear-gradient(180deg, rgba(18,18,18,0.7) 0%, rgba(18,18,18,1) 100%), 
-                        url('https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-            background-size: cover; background-position: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Добавлено для горизонтального центрирования */
+            text-align: center;
+            padding-top: 120px;
+            padding-bottom: 100px;
+            position: relative;
         }
-        .hero-content { max-width: 900px; padding: 20px; animation: fadeIn 1.5s ease; }
-        h1 { font-size: 58px; margin: 0 0 20px 0; line-height: 1.1; font-weight: 800; text-transform: uppercase; }
-        p.subtitle { font-size: 22px; color: var(--gray); margin-bottom: 40px; font-weight: 300; }
-        
-        .btn-main {
-            display: inline-block; background-color: var(--primary); color: white; border: none; padding: 18px 50px; 
-            font-size: 18px; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.3s; text-decoration: none;
-            box-shadow: 0 10px 30px rgba(255, 75, 75, 0.3);
+        .hero h1 { font-size: 72px; line-height: 1.05; margin-bottom: 25px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; }
+        .hero p { font-size: 22px; color: var(--text-gray); margin-bottom: 50px; max-width: 800px; margin-left: auto; margin-right: auto; font-weight: 300; }
+        .hero-stats { display: flex; justify-content: center; gap: 50px; margin-top: 80px; }
+        .hero-stat h3 { font-size: 48px; font-weight: 900; margin: 0; color: var(--primary); }
+        .hero-stat p { margin: 5px 0 0; color: var(--text-gray); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* ОБЩИЕ СЕКЦИИ */
+        .section { padding: var(--section-spacing) 0; }
+        .section-header { text-align: center; margin-bottom: 70px; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .section-label { color: var(--primary); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; font-size: 12px; display: block; }
+        .section-title { font-size: 42px; margin: 0 0 20px; text-transform: uppercase; font-weight: 800; line-height: 1.2; }
+        .section-desc { font-size: 18px; color: var(--text-gray); }
+
+        /* КАРТОЧКИ ГЛАССМОРФИЗМ */
+        .glass-card {
+            background: var(--glass); border: 1px solid var(--glass-border); border-radius: 25px; padding: 40px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; height: 100%;
         }
-        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(255, 75, 75, 0.5); }
+        .glass-card:hover { border-color: var(--primary); transform: translateY(-10px); background: var(--glass-strong); }
 
-        /* FEATURES SECTION */
-        .section { padding: 100px 10%; }
-        .section-title { text-align: center; font-size: 36px; margin-bottom: 60px; font-weight: bold; }
-        .section-title span { border-bottom: 3px solid var(--primary); }
+        /* ПОЧЕМУ КИТАЙ (Grid) */
+        .reasons-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .reason-icon { font-size: 50px; color: var(--primary); margin-bottom: 25px; }
+        .reason-card h3 { font-size: 22px; margin-bottom: 15px; }
+        .reason-card p { color: var(--text-gray); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        
-        .card {
-            background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s; position: relative; overflow: hidden;
+        /* ПУТЬ СТУДЕНТА (Timeline) */
+        .timeline { position: relative; max-width: 1000px; margin: 0 auto; }
+        .timeline::before { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background: var(--glass-border); top: 0; }
+        .timeline-item { display: flex; justify-content: space-between; margin-bottom: 60px; position: relative; }
+        .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+        .timeline-dot {
+            position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%);
+            width: 24px; height: 24px; background: var(--primary); border-radius: 50%;
+            border: 4px solid var(--dark); z-index: 2; box-shadow: 0 0 20px var(--primary);
         }
-        .card:hover { transform: translateY(-10px); border-color: var(--primary); }
-        .icon { font-size: 40px; margin-bottom: 20px; }
-        .card h3 { margin: 0 0 15px 0; font-size: 22px; }
-        .card p { color: var(--gray); font-size: 15px; margin: 0; }
+        .timeline-content { width: 45%; background: var(--glass); padding: 30px; border-radius: 20px; border: 1px solid var(--glass-border); position: relative; }
+        .timeline-content h3 { margin: 0 0 10px; font-size: 24px; color: var(--primary); }
+        .timeline-content h4 { margin: 0 0 15px; font-size: 18px; }
+        .timeline-content p { color: var(--text-gray); margin: 0; }
+        .timeline-item:nth-child(even) .timeline-content { text-align: right; }
 
-        /* FORM SECTION */
+        /* НАСТАВНИКИ */
+        .teachers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
+        .teacher-card { padding: 0; overflow: hidden; }
+        .teacher-img-wrap { height: 380px; overflow: hidden; position: relative; }
+        .teacher-img { width: 100%; height: 100%; background-size: cover; background-position: center; filter: grayscale(100%); transition: 0.5s; transform: scale(1.05); }
+        .teacher-card:hover .teacher-img { filter: grayscale(0%); transform: scale(1); }
+        .teacher-info { padding: 30px; position: relative; z-index: 2; background: var(--dark-sec); border-top: 1px solid var(--glass-border); }
+        .teacher-info h3 { margin: 0; font-size: 22px; }
+        .teacher-info p { color: var(--primary); font-weight: 700; margin: 5px 0 0; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
+
+        /* ТАРИФЫ */
+        .tariffs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; align-items: center; }
+        .tariff-card { display: flex; flex-direction: column; padding: 50px 40px; }
+        .tariff-card.featured { border: 2px solid var(--primary); background: rgba(230, 0, 18, 0.05); transform: scale(1.05); z-index: 2; }
+        .tariff-card.featured:hover { transform: scale(1.08) translateY(-10px); }
+        .tariff-badge { position: absolute; top: 20px; right: 20px; background: var(--primary); padding: 5px 12px; border-radius: 30px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .tariff-name { font-size: 28px; margin-bottom: 20px; }
+        .tariff-price { font-size: 42px; font-weight: 900; margin-bottom: 30px; color: white; }
+        .tariff-price span { font-size: 16px; font-weight: 500; color: var(--text-gray); }
+        .tariff-features { list-style: none; padding: 0; margin: 0 0 40px 0; flex: 1; }
+        .tariff-features li { margin-bottom: 18px; color: var(--text-gray); font-size: 15px; display: flex; align-items: center; }
+        .tariff-features li i { color: var(--primary); margin-right: 15px; font-size: 18px; }
+
+        /* ПАРТНЕРЫ */
+        .partners-flex { display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; opacity: 0.6; }
+        .partner-logo { font-size: 30px; font-weight: 800; color: #555; text-transform: uppercase; }
+
+        /* FAQ */
+        .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .faq-item { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; padding: 30px; cursor: pointer; transition: 0.3s; }
+        .faq-item:hover { background: var(--glass-strong); border-color: rgba(255,255,255,0.2); }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: 700; }
+        .faq-answer { margin-top: 20px; color: var(--text-gray); line-height: 1.7; display: none; /* JS будет открывать */ }
+
+        /* КОНТАКТЫ И ФОРМА */
+        .contact-split { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .contact-info h2 { font-size: 48px; margin-bottom: 30px; line-height: 1.1; }
+        .contact-data-item { display: flex; align-items: flex-start; margin-bottom: 30px; }
+        .contact-icon { width: 50px; height: 50px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px; margin-right: 20px; flex-shrink: 0; }
+        .contact-text h4 { margin: 0 0 5px; font-size: 18px; }
+        .contact-text p { margin: 0; color: var(--text-gray); }
+
         .form-container {
-            background: linear-gradient(145deg, #1a1a1a, #222); padding: 60px; border-radius: 30px; 
-            max-width: 600px; margin: 0 auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(20, 20, 20, 0.9); backdrop-filter: blur(30px);
+            padding: 50px; border-radius: 30px; border: 1px solid var(--glass-border); box-shadow: 0 30px 80px rgba(0,0,0,0.5);
         }
-        input {
-            width: 100%; padding: 20px; margin-bottom: 20px; background: rgba(255,255,255,0.05); border: 1px solid transparent;
-            border-radius: 15px; color: white; font-size: 16px; box-sizing: border-box; transition: 0.3s;
+        input, textarea {
+            width: 100%; padding: 22px; margin-bottom: 20px; background: rgba(255,255,255,0.04); border: 2px solid var(--glass-border);
+            border-radius: 15px; color: white; font-size: 16px; transition: 0.3s; box-sizing: border-box; font-family: 'Montserrat', sans-serif;
         }
-        input:focus { border-color: var(--primary); outline: none; background: rgba(255,255,255,0.1); }
-        
-        .success-msg { background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 30px; }
+        input:focus, textarea:focus { border-color: var(--primary); background: rgba(255,255,255,0.08); outline: none; }
 
         /* FOOTER */
-        footer { padding: 50px 10%; background: #000; text-align: center; color: #555; font-size: 14px; margin-top: 100px; }
+        footer { border-top: 1px solid var(--glass-border); padding: 80px 0 30px; background: #020202; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 60px; }
+        .footer-about p { color: var(--text-gray); margin-top: 20px; max-width: 300px; }
+        .footer-col h4 { color: white; margin-bottom: 25px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-links a { color: var(--text-gray); display: block; margin-bottom: 12px; text-decoration: none; transition: 0.3s; font-size: 14px; }
+        .footer-links a:hover { color: var(--primary); padding-left: 5px; }
+        .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid var(--glass-border); font-size: 12px; color: #444; }
 
-        /* MOBILE ADAPTIVE */
+        /* АДАПТИВНОСТЬ */
+        @media (max-width: 1024px) {
+            .hero h1 { font-size: 50px; }
+            .reasons-grid, .tariffs-grid, .contact-split { grid-template-columns: 1fr; gap: 40px; }
+            .tariff-card.featured { transform: scale(1); }
+            .timeline::before { left: 20px; }
+            .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; padding-left: 50px; }
+            .timeline-dot { left: 20px; top: 20px; }
+            .timeline-content, .timeline-item:nth-child(even) .timeline-content { width: 100%; text-align: left; }
+        }
         @media (max-width: 768px) {
-            h1 { font-size: 36px; }
-            .nav { display: none; } /* Скрываем меню на телефоне для простоты */
-            .section { padding: 60px 5%; }
+            .nav { display: none; }
+            .hero { padding-top: 150px; }
+            .hero h1 { font-size: 36px; }
+            .hero-stats { flex-direction: column; gap: 30px; }
+            .section-title { font-size: 32px; }
+            .teachers-grid, .faq-grid, .footer-grid { grid-template-columns: 1fr; }
             .form-container { padding: 30px; }
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* УТИЛИТА ЯЗЫКА */
+        [data-lang="uz"] { display: none; }
+        body.uz [data-lang="ru"] { display: none; }
+        body.uz [data-lang="uz"] { display: block; }
     </style>
 </head>
-<body>
+<body class="ru">
+
+<div class="background-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+</div>
 
 <header>
-    <div class="logo">
-        NSRE<span>.</span>
-        <small>New Silk Road Education</small>
+    <div class="container">
+        <div class="logo">
+            NSRE<span>.</span>
+            <small>NEW SILK ROAD EDUCATION</small>
+        </div>
+        
+        <nav class="nav">
+            <a href="#reasons"><span data-lang="ru">Почему Китай</span><span data-lang="uz">Nega Xitoy</span></a>
+            <a href="#timeline"><span data-lang="ru">Путь</span><span data-lang="uz">Yo'l</span></a>
+            <a href="#teachers"><span data-lang="ru">Наставники</span><span data-lang="uz">Ustozlar</span></a>
+            <a href="#tariffs"><span data-lang="ru">Тарифы</span><span data-lang="uz">Tariflar</span></a>
+            <a href="#contact"><span data-lang="ru">Контакты</span><span data-lang="uz">Bog'lanish</span></a>
+        </nav>
+
+        <div class="lang-switch">
+            <div class="lang-btn active" onclick="setLang('ru')">RU</div>
+            <div class="lang-btn" onclick="setLang('uz')">UZ</div>
+        </div>
     </div>
-    <nav class="nav">
-        <a href="#features">Преимущества</a>
-        <a href="#levels">Программа</a>
-        <a href="#contact" class="nav-btn">Записаться</a>
-    </nav>
 </header>
 
-<section class="hero">
-    <div class="hero-content">
-        <h1>New Silk Road <br><span style="color: var(--primary);">Education</span></h1>
-        <p class="subtitle">Изучение китайского языка с погружением в культуру. От HSK 1 до поступления в ВУЗы Китая.</p>
-        <a href="#contact" class="btn-main">Записаться на пробный урок</a>
+{% if success %}
+<div style="position: fixed; top: 100px; right: 20px; background: rgba(40, 167, 69, 0.2); border: 1px solid #28a745; color: #28a745; padding: 20px 30px; border-radius: 15px; backdrop-filter: blur(15px); z-index: 9999; box-shadow: 0 10px 30px rgba(40, 167, 69, 0.2); display: flex; align-items: center; gap: 15px;">
+    <i class="fas fa-check-circle" style="font-size: 24px;"></i>
+    <div>
+        <strong><span data-lang="ru">Заявка принята!</span><span data-lang="uz">Ariza qabul qilindi!</span></strong><br>
+        <span style="font-size: 12px; opacity: 0.8;"><span data-lang="ru">Менеджер скоро свяжется с вами.</span><span data-lang="uz">Menejer tez orada siz bilan bog'lanadi.</span></span>
     </div>
-</section>
+</div>
+{% endif %}
 
-<section id="features" class="section">
-    <div class="section-title"><span>Почему выбирают NSRE</span></div>
-    <div class="grid">
-        <div class="card">
-            <div class="icon">🧧</div>
-            <h3>Опытные наставники</h3>
-            <p>Преподаватели, прожившие в Китае более 5 лет. Носители языка для продвинутых групп.</p>
-        </div>
-        <div class="card">
-            <div class="icon">🚀</div>
-            <h3>Гарантия результата</h3>
-            <p>Мы готовим к сдаче HSK. 98% наших студентов успешно сдают экзамены с первого раза.</p>
-        </div>
-        <div class="card">
-            <div class="icon">🏮</div>
-            <h3>Атмосфера</h3>
-            <p>Не просто уроки. Чайные церемонии, каллиграфия и разговорные клубы каждую неделю.</p>
-        </div>
-    </div>
-</section>
+<section class="hero container hidden-op">
+    <div>
+        <h1>
+            <span data-lang="ru">Не просто язык.</span><span data-lang="uz">Shunchaki til emas.</span><br>
+            <span class="text-gradient"><span data-lang="ru">Это твое будущее.</span><span data-lang="uz">Bu sizning kelajagingiz.</span></span>
+        </h1>
+        <p>
+            <span data-lang="ru">Центр подготовки нового поколения в Ташкенте. Мы не учим "по учебнику". Мы готовим к реальной жизни, бизнесу и учебе в топовых ВУЗах Китая.</span>
+            <span data-lang="uz">Toshkentdagi yangi avlod tayyorlash markazi. Biz "darslik bo'yicha" o'rgatmaymiz. Biz real hayot, biznes va Xitoyning yetakchi oliy o'quv yurtlarida o'qishga tayyorlaymiz.</span>
+        </p>
+        <a href="#contact" class="btn-main">
+            <span data-lang="ru">Начать путь к HSK 6</span><span data-lang="uz">HSK 6 sari yo'lni boshlash</span>
+        </a>
 
-<section id="levels" class="section">
-    <div class="section-title"><span>Программа обучения</span></div>
-    <div class="grid">
-        <div class="card" style="border-left: 5px solid #4facfe;">
-            <h3>Начальный (HSK 1-2)</h3>
-            <p>Постановка произношения, базовые иероглифы, простые диалоги.</p>
-        </div>
-        <div class="card" style="border-left: 5px solid #00f2fe;">
-            <h3>Средний (HSK 3-4)</h3>
-            <p>Свободное общение, чтение текстов, подготовка к учебе в Китае.</p>
-        </div>
-        <div class="card" style="border-left: 5px solid #ff4b4b;">
-            <h3>Профи (HSK 5-6)</h3>
-            <p>Деловой китайский, чтение литературы, просмотр фильмов в оригинале.</p>
-        </div>
-    </div>
-</section>
-
-<section id="contact" class="section">
-    <div class="section-title"><span>Начни обучение в NSRE</span></div>
-    
-    <div class="form-container">
-        {% if success %}
-            <div class="success-msg">
-                ✅ <strong>Ваша заявка принята!</strong><br>
-                Менеджер NSRE свяжется с вами в ближайшее время.
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <h3>98%</h3>
+                <p><span data-lang="ru">Сдача HSK</span><span data-lang="uz">HSK topshirish</span></p>
             </div>
-        {% endif %}
-
-        <form method="POST" action="/#contact">
-            {% csrf_token %}
-            <div style="text-align: center; margin-bottom: 30px; color: #ccc;">
-                Оставьте свои контакты, и мы пригласим вас на бесплатное тестирование
+            <div class="hero-stat">
+                <h3>$30k+</h3>
+                <p><span data-lang="ru">Сумма грантов</span><span data-lang="uz">Grantlar summasi</span></p>
             </div>
-            
-            <input type="text" name="first_name" placeholder="Как вас зовут?" required>
-            <input type="tel" name="phone" placeholder="Ваш телефон (+998...)" required>
-            
-            <button type="submit" class="btn-main" style="width: 100%; border-radius: 15px;">Отправить заявку</button>
-        </form>
+            <div class="hero-stat">
+                <h3>500+</h3>
+                <p><span data-lang="ru">Выпускников</span><span data-lang="uz">Bitiruvchilar</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="reasons" class="section container hidden-op">
+    <div class="section-header">
+        <span class="section-label"><span data-lang="ru">Перспективы</span><span data-lang="uz">Istiqbollar</span></span>
+        <h2 class="section-title"><span data-lang="ru">Почему Китай — это новый Запад?</span><span data-lang="uz">Nega Xitoy — bu yangi G'arb?</span></h2>
+        <p class="section-desc">
+            <span data-lang="ru">Мир меняется. Знание английского — это база. Знание китайского — это ваше конкурентное преимущество на рынке труда ближайшие 20 лет.</span>
+            <span data-lang="uz">Dunyo o'zgarmoqda. Ingliz tilini bilish — bu baza. Xitoy tilini bilish — bu yaqin 20 yil ichida mehnat bozoridagi raqobat ustunligingiz.</span>
+        </p>
+    </div>
+
+    <div class="reasons-grid">
+        <div class="glass-card reason-card">
+            <i class="fas fa-chart-line reason-icon"></i>
+            <h3><span data-lang="ru">Экономика №1</span><span data-lang="uz">Iqtisodiyot №1</span></h3>
+            <p><span data-lang="ru">Китай — крупнейший торговый партнер Узбекистана. Сотни компаний ищут специалистов со знанием языка прямо сейчас.</span><span data-lang="uz">Xitoy O'zbekistonning eng yirik savdo hamkori. Yuzlab kompaniyalar hozirning o'zida til biladigan mutaxassislarni qidirmoqda.</span></p>
+        </div>
+        <div class="glass-card reason-card">
+            <i class="fas fa-university reason-icon"></i>
+            <h3><span data-lang="ru">Доступные Гранты</span><span data-lang="uz">Qulay Grantlar</span></h3>
+            <p><span data-lang="ru">Образование в Китае часто дешевле контракта в Ташкенте. Мы помогаем получить полное финансирование (учеба + проживание + стипендия).</span><span data-lang="uz">Xitoyda ta'lim ko'pincha Toshkentdagi kontraktdan arzonroq. Biz to'liq moliyalashtirishni (o'qish + turar joy + stipendiya) olishga yordam beramiz.</span></p>
+        </div>
+        <div class="glass-card reason-card">
+            <i class="fas fa-rocket reason-icon"></i>
+            <h3><span data-lang="ru">Карьерный Лифт</span><span data-lang="uz">Karyera Lifti</span></h3>
+            <p><span data-lang="ru">Специалисты с HSK 5 зарабатывают в 2-3 раза больше на старте. Это ваш пропуск в международный бизнес.</span><span data-lang="uz">HSK 5 darajasiga ega mutaxassislar boshlanishida 2-3 barobar ko'proq daromad topadilar. Bu sizning xalqaro biznesga kirish chiptangiz.</span></p>
+        </div>
+    </div>
+</section>
+
+<section id="timeline" class="section container hidden-op">
+    <div class="section-header">
+        <span class="section-label"><span data-lang="ru">Дорожная карта</span><span data-lang="uz">Yo'l xaritasi</span></span>
+        <h2 class="section-title"><span data-lang="ru">Ваш путь от "Нихао" до Гранта</span><span data-lang="uz">"Nihao"dan Grantgacha bo'lgan yo'lingiz</span></h2>
+        <p class="section-desc">
+            <span data-lang="ru">Мы разработали четкую систему, которая гарантированно приводит к результату за 12-18 месяцев.</span>
+            <span data-lang="uz">Biz 12-18 oy ichida kafolatlangan natijaga olib keladigan aniq tizimni ishlab chiqdik.</span>
+        </p>
+    </div>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content glass-card">
+                <h3>Этап 1: Старт (HSK 1-2)</h3>
+                <h4><span data-lang="ru">Погружение в языковую среду</span><span data-lang="uz">Til muhitiga sho'ng'ish</span></h4>
+                <p><span data-lang="ru">3-4 месяца. Ставим идеальное произношение, учим базовые иероглифы без зубрежки, начинаем говорить простыми фразами.</span><span data-lang="uz">3-4 oy. Ideal talaffuzni qo'yamiz, bazaviy iyerogliflarni yodlashsiz o'rganamiz, oddiy iboralar bilan gapirishni boshlaymiz.</span></p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content glass-card">
+                <h3>Этап 2: Разгон (HSK 3-4)</h3>
+                <h4><span data-lang="ru">Разговорный и бизнес-китайский</span><span data-lang="uz">So'zlashuv va biznes xitoy tili</span></h4>
+                <p><span data-lang="ru">5-8 месяцев. Свободное общение на бытовые темы. Подготовка документов для ВУЗов. Участие в Speaking Club с носителями.</span><span data-lang="uz">5-8 oy. Maishiy mavzularda erkin muloqot. Oliy o'quv yurtlari uchun hujjatlarni tayyorlash. Tashuvchilar bilan Speaking Club'da qatnashish.</span></p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content glass-card">
+                <h3>Этап 3: Финиш (HSK 5 + Грант)</h3>
+                <h4><span data-lang="ru">Академический уровень и поступление</span><span data-lang="uz">Akademik daraja va o'qishga kirish</span></h4>
+                <p><span data-lang="ru">9-12 месяцев. Чтение сложной литературы, сдача экзамена HSK. Мы подаем ваши документы и получаем приглашение от ВУЗа.</span><span data-lang="uz">9-12 oy. Murakkab adabiyotlarni o'qish, HSK imtihonini topshirish. Biz hujjatlaringizni topshiramiz va Oliy o'quv yurtidan taklifnoma olamiz.</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="teachers" class="section container hidden-op">
+    <div class="section-header">
+        <span class="section-label"><span data-lang="ru">Менторы</span><span data-lang="uz">Mentorlar</span></span>
+        <h2 class="section-title"><span data-lang="ru">Учитесь у лучших</span><span data-lang="uz">Eng yaxshilardan o'rganing</span></h2>
+        <p class="section-desc">
+            <span data-lang="ru">Наши преподаватели — это не просто филологи. Это люди, прожившие в Китае 5+ лет, знающие культуру и реальный живой язык.</span>
+            <span data-lang="uz">Bizning o'qituvchilarimiz shunchaki filologlar emas. Ular Xitoyda 5 yildan ortiq yashagan, madaniyatni va haqiqiy jonli tilni biladigan insonlardir.</span>
+        </p>
+    </div>
+
+    <div class="teachers-grid">
+        <div class="glass-card teacher-card">
+            <div class="teacher-img-wrap">
+                <div class="teacher-img" style="background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=688&auto=format&fit=crop');"></div>
+            </div>
+            <div class="teacher-info">
+                <h3>Wang Li</h3>
+                <p><span data-lang="ru">Носитель языка • HSK 6 Эксперт</span><span data-lang="uz">Til tashuvchisi • HSK 6 Ekspert</span></p>
+            </div>
+        </div>
+        <div class="glass-card teacher-card">
+            <div class="teacher-img-wrap">
+                <div class="teacher-img" style="background-image: url('https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=687&auto=format&fit=crop');"></div>
+            </div>
+            <div class="teacher-info">
+                <h3>Azizov B.</h3>
+                <p><span data-lang="ru">Старший преподаватель • 8 лет опыта</span><span data-lang="uz">Katta o'qituvchi • 8 yillik tajriba</span></p>
+            </div>
+        </div>
+        <div class="glass-card teacher-card">
+            <div class="teacher-img-wrap">
+                <div class="teacher-img" style="background-image: url('https://images.unsplash.com/photo-1598550874175-4d0ef434c533?q=80&w=761&auto=format&fit=crop');"></div>
+            </div>
+            <div class="teacher-info">
+                <h3>Sofia Kim</h3>
+                <p><span data-lang="ru">Куратор грантовых программ</span><span data-lang="uz">Grant dasturlari kuratori</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="tariffs" class="section container hidden-op">
+    <div class="section-header">
+        <span class="section-label"><span data-lang="ru">Инвестиции</span><span data-lang="uz">Investitsiyalar</span></span>
+        <h2 class="section-title"><span data-lang="ru">Выберите свой темп</span><span data-lang="uz">O'z tezligingizni tanlang</span></h2>
+    </div>
+
+    <div class="tariffs-grid">
+        <div class="glass-card tariff-card">
+            <div class="tariff-name">Standard</div>
+            <div class="tariff-price">800k <span>UZS / мес</span></div>
+            <ul class="tariff-features">
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">Группа 10-12 человек</span><span data-lang="uz">10-12 kishilik guruh</span></li>
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">3 урока в неделю (по 90 мин)</span><span data-lang="uz">Haftada 3 dars (90 daq)</span></li>
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">Базовые материалы</span><span data-lang="uz">Bazaviy materiallar</span></li>
+                <li style="opacity: 0.5;"><i class="fas fa-times-circle" style="color: #555;"></i> <span data-lang="ru">Speaking Club</span><span data-lang="uz">Speaking Club</span></li>
+            </ul>
+            <a href="#contact" class="btn-main" style="background: transparent; border: 2px solid var(--primary); text-align: center;">
+                <span data-lang="ru">Выбрать</span><span data-lang="uz">Tanlash</span>
+            </a>
+        </div>
+
+        <div class="glass-card tariff-card featured">
+            <div class="tariff-badge">POPULAR</div>
+            <div class="tariff-name">Premium</div>
+            <div class="tariff-price"><span class="text-accent">1.2mln</span> <span>UZS / мес</span></div>
+            <ul class="tariff-features">
+                <li><i class="fas fa-check-circle"></i> <strong><span data-lang="ru">Мини-группа (до 6 чел)</span><span data-lang="uz">Mini-guruh (6 kishigacha)</span></strong></li>
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">3 урока в неделю (по 90 мин)</span><span data-lang="uz">Haftada 3 dars (90 daq)</span></li>
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">Все учебные материалы (PDF+Аудио)</span><span data-lang="uz">Barcha o'quv materiallari</span></li>
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">Еженедельный Speaking Club</span><span data-lang="uz">Haftalik Speaking Club</span></li>
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">Консультация по грантам</span><span data-lang="uz">Grantlar bo'yicha konsultatsiya</span></li>
+            </ul>
+            <a href="#contact" class="btn-main" style="text-align: center; box-shadow: none;">
+                <span data-lang="ru">Начать учиться</span><span data-lang="uz">O'qishni boshlash</span>
+            </a>
+        </div>
+
+        <div class="glass-card tariff-card">
+            <div class="tariff-name">VIP Mentor</div>
+            <div class="tariff-price">2.5mln <span>UZS / мес</span></div>
+            <ul class="tariff-features">
+                <li><i class="fas fa-check-circle"></i> <strong><span data-lang="ru">Индивидуально с носителем</span><span data-lang="uz">Tashuvchi bilan individual</span></strong></li>
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">Гибкий график (под вас)</span><span data-lang="uz">Moslashuvchan jadval</span></li>
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">Персональный план до HSK 5-6</span><span data-lang="uz">HSK 5-6 gacha shaxsiy reja</span></li>
+                <li><i class="fas fa-check-circle"></i> <span data-lang="ru">Полное сопровождение (документы)</span><span data-lang="uz">To'liq hamrohlik (hujjatlar)</span></li>
+            </ul>
+            <a href="#contact" class="btn-main" style="background: transparent; border: 2px solid var(--primary); text-align: center;">
+                <span data-lang="ru">Обсудить детали</span><span data-lang="uz">Tafsilotlarni muhokama qilish</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<div class="section container hidden-op" style="padding-top: 0; padding-bottom: 80px;">
+    <div class="section-header" style="margin-bottom: 40px;">
+        <span class="section-label" style="text-align: center; display: block;"><span data-lang="ru">Наши партнеры и ВУЗы</span><span data-lang="uz">Hamkorlarimiz va Oliy o'quv yurtlari</span></span>
+    </div>
+    <div class="partners-flex">
+        <div class="partner-logo">PEKING UNIVERSITY</div>
+        <div class="partner-logo">TSINGHUA</div>
+        <div class="partner-logo">FUDAN</div>
+        <div class="partner-logo">ZHEJIANG</div>
+    </div>
+</div>
+
+<section class="section container hidden-op">
+    <div class="section-header">
+        <h2 class="section-title">FAQ</h2>
+        <p class="section-desc"><span data-lang="ru">Ответы на частые вопросы</span><span data-lang="uz">Tez-tez beriladigan savollarga javoblar</span></p>
+    </div>
+    <div class="faq-grid">
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span data-lang="ru">Китайский — это очень сложно?</span><span data-lang="uz">Xitoy tili juda qiyinmi?</span>
+                <i class="fas fa-plus text-accent"></i>
+            </div>
+            <div class="faq-answer">
+                <span data-lang="ru">Это миф. Грамматика китайского проще, чем в русском или английском (нет падежей, родов, сложных времен). Главное — преодолеть страх иероглифов и тонов в первые 2 месяца. Наша методика делает этот вход плавным.</span>
+                <span data-lang="uz">Bu mif. Xitoy tili grammatikasi rus yoki ingliz tiliga qaraganda osonroq (kelishiklar, rodlar, murakkab zamonlar yo'q). Asosiysi — dastlabki 2 oyda iyerogliflar va tonlardan qo'rquvni yengish. Bizning metodikamiz bu kirishni silliq qiladi.</span>
+            </div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span data-lang="ru">Реально ли получить грант?</span><span data-lang="uz">Grant olish haqiqatmi?</span>
+                <i class="fas fa-plus text-accent"></i>
+            </div>
+            <div class="faq-answer">
+                <span data-lang="ru">Абсолютно. Китай выделяет миллиарды на привлечение иностранных студентов. Если у вас есть HSK 4-5 и хороший средний балл аттестата, ваши шансы на полный грант (обучение + проживание + стипендия) превышают 80%.</span>
+                <span data-lang="uz">Mutlaqo. Xitoy chet ellik talabalarni jalb qilish uchun milliardlab mablag' ajratadi. Agar sizda HSK 4-5 va shahodatnomada yaxshi o'rtacha ball bo'lsa, to'liq grant yutib olish imkoniyatingiz (o'qish + turar joy + stipendiya) 80% dan oshadi.</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="section container hidden-op">
+    <div class="contact-split">
+        <div class="contact-info">
+            <h2>
+                <span data-lang="ru">Готовы начать <br>свой путь?</span>
+                <span data-lang="uz">Yo'lingizni boshlashga <br>tayyormisiz?</span>
+            </h2>
+            <p class="section-desc" style="margin-bottom: 40px;">
+                <span data-lang="ru">Оставьте заявку сейчас, и получите бесплатный первый урок и консультацию по грантам.</span>
+                <span data-lang="uz">Hozir ariza qoldiring va bepul birinchi dars hamda grantlar bo'yicha konsultatsiya oling.</span>
+            </p>
+
+            <div class="contact-data-item">
+                <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="contact-text">
+                    <h4><span data-lang="ru">Наш офис</span><span data-lang="uz">Bizning ofis</span></h4>
+                    <p>Toshkent sh., <strong>Oybek metro</strong></p>
+                </div>
+            </div>
+            <div class="contact-data-item">
+                <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+                <div class="contact-text">
+                    <h4><span data-lang="ru">Телефон</span><span data-lang="uz">Telefon</span></h4>
+                    <p>+998 91 088 86 88</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <h3 style="margin: 0 0 30px; font-size: 24px; text-align: center;">
+                <span data-lang="ru">Заявка на обучение</span><span data-lang="uz">O'qishga ariza</span>
+            </h3>
+            <form method="POST" action="/#contact">
+                {% csrf_token %}
+                <input type="text" name="first_name" placeholder="Имя / Ism" required>
+                <input type="tel" name="phone" placeholder="+998 __ ___-__-__" required>
+                <textarea name="comment" rows="3" placeholder="Комментарий (например: хочу грант) / Izoh"></textarea>
+                
+                <button type="submit" class="btn-main" style="width: 100%; text-align: center; box-shadow: none; background: linear-gradient(90deg, var(--primary), var(--accent));">
+                    <span data-lang="ru">Отправить заявку</span><span data-lang="uz">Arizani yuborish</span>
+                </button>
+                <p style="text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-gray);">
+                    <span data-lang="ru">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности.</span>
+                    <span data-lang="uz">Tugmani bosish orqali siz maxfiylik siyosatiga rozilik bildirasiz.</span>
+                </p>
+            </form>
+        </div>
     </div>
 </section>
 
 <footer>
-    © 2025 New Silk Road Education (NSRE). Все права защищены.<br>
-    <span style="opacity: 0.3; font-size: 10px;">CRM System v1.0</span>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-about">
+                <div class="logo" style="font-size: 20px;">NSRE<span>.</span></div>
+                <p>
+                    <span data-lang="ru">Образовательный центр нового поколения. Ваш надежный проводник в мир китайского языка и образования в Поднебесной.</span>
+                    <span data-lang="uz">Yangi avlod ta'lim markazi. Xitoy tili va Osmon osti mamlakatida ta'lim dunyosiga sizning ishonchli yo'lboshchingiz.</span>
+                </p>
+            </div>
+            <div class="footer-col">
+                <h4><span data-lang="ru">Навигация</span><span data-lang="uz">Navigatsiya</span></h4>
+                <div class="footer-links">
+                    <a href="#reasons"><span data-lang="ru">Почему мы</span><span data-lang="uz">Nega biz</span></a>
+                    <a href="#teachers"><span data-lang="ru">Команда</span><span data-lang="uz">Jamoa</span></a>
+                    <a href="#tariffs"><span data-lang="ru">Цены</span><span data-lang="uz">Narxlar</span></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4><span data-lang="ru">Программы</span><span data-lang="uz">Dasturlar</span></h4>
+                <div class="footer-links">
+                    <a href="#">HSK 1-6</a>
+                    <a href="#">Business Chinese</a>
+                    <a href="#">Гранты в Китай</a>
+                    <a href="#">Детские группы</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4><span data-lang="ru">Контакты</span><span data-lang="uz">Bog'lanish</span></h4>
+                <div class="footer-links">
+                    <a href="tel:+998910888688">+998 91 088 86 88</a>
+                    <a href="#">Oybek metro, Tashkent</a>
+                    <a href="https://t.me/nsre_admin_bot" target="_blank"><i class="fab fa-telegram"></i> Telegram Bot</a>
+                    <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 New Silk Road Education. All rights reserved. Developed by Red Mars Production.
+        </div>
+    </div>
 </footer>
+
+<script>
+    // Смена языка
+    function setLang(lang) {
+        document.body.className = lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.innerText.toLowerCase() === lang) btn.classList.add('active');
+        });
+        localStorage.setItem('nsre_lang', lang);
+    }
+    const savedLang = localStorage.getItem('nsre_lang') || 'ru';
+    setLang(savedLang);
+
+    // Анимация при скролле (Intersection Observer)
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('show-op');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.hidden-op').forEach((el) => observer.observe(el));
+
+    // FAQ Accordion
+    function toggleFaq(element) {
+        const answer = element.querySelector('.faq-answer');
+        const icon = element.querySelector('i');
+        if (answer.style.display === 'block') {
+            answer.style.display = 'none';
+            icon.classList.replace('fa-minus', 'fa-plus');
+        } else {
+            answer.style.display = 'block';
+            icon.classList.replace('fa-plus', 'fa-minus');
+        }
+    }
+
+    // Меняем шапку при скролле
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) {
+            header.style.padding = '10px 0';
+            header.style.background = 'rgba(5, 5, 5, 0.95)';
+        } else {
+            header.style.padding = '15px 0';
+            header.style.background = 'rgba(5, 5, 5, 0.8)';
+        }
+    });
+</script>
 
 </body>
 </html>
