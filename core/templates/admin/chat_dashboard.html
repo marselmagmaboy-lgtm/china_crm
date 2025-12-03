@@ -2,226 +2,141 @@
 
 {% block content %}
 <style>
-    /* --- СТИЛИ TELEGRAM DARK --- */
-    body { overflow: hidden; } /* Убираем прокрутку всего сайта */
+    /* ... (стили те же, плюс новые) ... */
+    body, html { height: 100%; overflow: hidden; }
+    .content { padding: 0 !important; margin: 0 !important; }
+    .tg-container { display: flex; height: 88vh; background: #17212b; color: white; border-top: 1px solid #333; font-family: sans-serif; }
     
-    .tg-container {
-        display: flex;
-        height: 85vh;
-        background-color: #17212b; /* Темный фон ТГ */
-        border: 1px solid #0e1621;
-        border-radius: 8px;
-        overflow: hidden;
-        color: white;
-        font-family: Arial, sans-serif;
-    }
+    /* SIDEBAR */
+    .tg-sidebar { width: 350px; background: #17212b; border-right: 1px solid #0e1621; display: flex; flex-direction: column; overflow-y: auto; }
+    .tg-item { padding: 10px 15px; cursor: pointer; display: flex; gap: 12px; border-bottom: 1px solid transparent; transition: 0.2s; }
+    .tg-item:hover { background: #202b36; }
+    .tg-item.active { background: #2b5278; }
+    .avatar { min-width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: white; }
+    .tg-info { flex: 1; overflow: hidden; }
+    .tg-name { font-weight: 600; font-size: 15px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tg-preview { font-size: 14px; color: #8faec5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }
+    .unread-dot { width: 10px; height: 10px; background: #3e7eb8; border-radius: 50%; display: inline-block; margin-right: 5px; }
 
-    /* ЛЕВАЯ КОЛОНКА (СПИСОК) */
-    .tg-sidebar {
-        width: 300px;
-        background-color: #17212b;
-        border-right: 1px solid #0e1621;
-        display: flex;
-        flex-direction: column;
-    }
+    /* MAIN CHAT */
+    .tg-main { flex: 1; display: flex; flex-direction: column; background: #0e1621; }
+    .tg-header { padding: 10px 20px; background: #17212b; border-bottom: 1px solid #0e1621; display: flex; justify-content: space-between; align-items: center; height: 50px; }
+    .tg-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; background: #0e1621; }
     
-    .tg-search { padding: 10px; background: #17212b; }
-    .tg-search input {
-        width: 100%; background: #242f3d; border: none; padding: 10px;
-        border-radius: 20px; color: white; outline: none;
-    }
+    .msg { max-width: 65%; padding: 8px 12px; border-radius: 12px; position: relative; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+    .msg.client { align-self: flex-start; background: #182533; border-bottom-left-radius: 0; }
+    .msg.manager { align-self: flex-end; background: #2b5278; border-bottom-right-radius: 0; }
+    .msg-img { max-width: 100%; border-radius: 10px; margin-bottom: 5px; cursor: pointer; }
+    .msg-audio { width: 250px; margin-top: 5px; }
+    .msg-time { font-size: 11px; color: #6c7883; float: right; margin-left: 10px; margin-top: 5px; }
 
-    .tg-list { overflow-y: auto; flex: 1; }
-    
-    .tg-item {
-        padding: 10px 15px; cursor: pointer; display: flex; align-items: center; gap: 10px;
-        border-bottom: 1px solid rgba(0,0,0,0.1);
-    }
-    .tg-item:hover { background-color: #202b36; }
-    .tg-item.active { background-color: #2b5278; }
-
-    .avatar {
-        width: 40px; height: 40px; background: linear-gradient(135deg, #4facfe, #00f2fe);
-        border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        font-weight: bold; font-size: 18px; color: white;
-    }
-
-    /* ПРАВАЯ КОЛОНКА (ЧАТ) */
-    .tg-main { flex: 1; display: flex; flex-direction: column; background-color: #0e1621; }
-    
-    .tg-header {
-        padding: 10px 20px; background-color: #17212b; border-bottom: 1px solid #0e1621;
-        display: flex; justify-content: space-between; align-items: center;
-    }
-
-    .tg-messages {
-        flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px;
-        background-image: url('https://w.wallhaven.cc/full/vg/wallhaven-vg8yw5.jpg'); /* Фон (можно убрать) */
-        background-size: cover;
-    }
-
-    .msg {
-        max-width: 70%; padding: 8px 12px; border-radius: 10px; position: relative; font-size: 14px; line-height: 1.4;
-    }
-    .msg.client { align-self: flex-start; background-color: #182533; color: white; border-bottom-left-radius: 0; }
-    .msg.manager { align-self: flex-end; background-color: #2b5278; color: white; border-bottom-right-radius: 0; }
-    
-    .msg-time { font-size: 10px; color: #aaa; text-align: right; margin-top: 4px; }
-
-    .tg-input {
-        padding: 15px; background-color: #17212b; display: flex; gap: 10px;
-    }
-    .tg-input input {
-        flex: 1; background: #17212b; border: none; color: white; outline: none; font-size: 15px;
-    }
-    .send-btn {
-        background: none; border: none; color: #4facfe; font-size: 24px; cursor: pointer;
-    }
-
-    /* Адаптив для мобилок */
-    @media (max-width: 768px) {
-        .tg-sidebar { width: {% if active_lead %}0{% else %}100%{% endif %}; display: {% if active_lead %}none{% else %}flex{% endif %}; }
-        .tg-main { display: {% if active_lead %}flex{% else %}none{% endif %}; }
-    }
+    /* INPUT AREA */
+    .tg-input-area { padding: 10px; background: #17212b; display: flex; gap: 10px; align-items: center; }
+    .file-btn { font-size: 24px; cursor: pointer; color: #6c7883; padding: 5px; }
+    .file-btn:hover { color: #667eea; }
+    .tg-input-area input[type="text"] { flex: 1; background: #0e1621; border: none; color: white; padding: 12px; border-radius: 10px; outline: none; }
+    .send-btn { background: none; border: none; color: #667eea; font-size: 28px; cursor: pointer; }
 </style>
 
 <div class="tg-container">
-    
-    <div class="tg-sidebar">
-        <div class="tg-search">
-            <input type="text" placeholder="Поиск..." id="searchBox">
+    <div class="tg-sidebar" id="sidebar">
         </div>
-        <div class="tg-list">
-            {% for lead in leads %}
-            <div class="tg-item {% if lead.id == active_lead.id %}active{% endif %}" onclick="window.location.href='/admin/chat/{{ lead.id }}/'">
-                <div class="avatar">{{ lead.first_name|first|upper }}</div>
-                <div style="flex: 1;">
-                    <div style="font-weight: bold;">{{ lead.first_name }}</div>
-                    <div style="font-size: 12px; color: #888;">{{ lead.get_status_display }}</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
 
     <div class="tg-main">
         {% if active_lead %}
             <div class="tg-header">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <a href="/admin/chat/" style="color: white; text-decoration: none; font-size: 20px;" class="d-md-none">←</a>
-                    <div class="avatar" style="width: 35px; height: 35px;">{{ active_lead.first_name|first|upper }}</div>
-                    <div>
-                        <div>{{ active_lead.first_name }}</div>
-                        <div style="font-size: 12px; color: #4facfe;">@{{ active_lead.telegram_username }}</div>
-                    </div>
+                <div>
+                    <strong>{{ active_lead.first_name }}</strong> <small style="color: #888;">@{{ active_lead.telegram_username }}</small>
                 </div>
-                <a href="/admin/core/lead/{{ active_lead.id }}/change/" class="btn btn-sm btn-outline-light">Карточка</a>
+                <a href="/admin/core/lead/{{ active_lead.id }}/change/" style="color: #667eea; text-decoration: none; font-size: 13px;">📝 Профиль</a>
             </div>
 
-            <div class="tg-messages" id="chatArea">
-                {% for msg in messages %}
-                    <div class="msg {% if msg.is_from_manager %}manager{% else %}client{% endif %}">
-                        {{ msg.text }}
-                        <div class="msg-time">{{ msg.created_at|date:"H:i" }}</div>
-                    </div>
-                {% endfor %}
-            </div>
+            <div class="tg-messages" id="chatArea"></div>
 
-            <form method="POST" class="tg-input">
+            <form method="POST" enctype="multipart/form-data" class="tg-input-area">
                 {% csrf_token %}
-                <input type="text" name="message_text" placeholder="Написать сообщение..." required autocomplete="off" id="msgInput">
+                
+                <label for="fileInput" class="file-btn">📎</label>
+                <input type="file" name="attachment" id="fileInput" style="display: none;" onchange="alert('Файл выбран: ' + this.files[0].name)">
+                
+                <input type="text" name="message_text" placeholder="Сообщение..." autocomplete="off" autofocus>
                 <button type="submit" class="send-btn">➤</button>
             </form>
         {% else %}
-            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #888;">
-                Выберите чат слева
-            </div>
+            <div style="display: flex; height: 100%; align-items: center; justify-content: center; color: #667eea;">← Выберите чат</div>
         {% endif %}
     </div>
-
 </div>
-
-<audio id="notifSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
 <script>
     const chatArea = document.getElementById('chatArea');
-    const notifSound = document.getElementById('notifSound');
-    let lastUnansweredCount = {{ unanswered_count }}; // Запоминаем сколько было при загрузке
+    const sidebar = document.getElementById('sidebar');
+    let isFirstLoad = true;
 
-    // Функция отрисовки красного бейджика в меню
-    function updateSidebarBadge(count) {
-        // Ищем ссылку на чат в боковом меню (Jazzmin)
-        // Обычно ссылки содержат href="/admin/chat/"
-        const links = document.querySelectorAll('a[href*="/admin/chat/"]');
+    function renderMessages(messages) {
+        if (!chatArea) return;
         
-        links.forEach(link => {
-            // Удаляем старый бейдж, если есть
-            const oldBadge = link.querySelector('.custom-badge');
-            if (oldBadge) oldBadge.remove();
+        // Хак: Если сообщений стало больше, перерисовываем
+        const currentCount = chatArea.querySelectorAll('.msg').length;
+        if (messages.length <= currentCount && !isFirstLoad) return;
 
-            if (count > 0) {
-                // Рисуем новый, если есть непрочитанные
-                const badge = document.createElement('span');
-                badge.className = 'custom-badge';
-                badge.style.cssText = 'background: #ff4b4b; color: white; padding: 2px 6px; border-radius: 10px; font-size: 11px; margin-left: 10px; font-weight: bold;';
-                badge.innerText = count;
-                
-                // Вставляем внутрь ссылки (после иконки и текста)
-                link.appendChild(badge);
-                
-                // Также меняем заголовок вкладки браузера
-                document.title = `(${count}) Чат | China CRM`;
+        let html = '';
+        messages.forEach(msg => {
+            let content = '';
+            // Рендеринг контента в зависимости от типа
+            if (msg.type === 'image' && msg.file_url) {
+                content += `<img src="${msg.file_url}" class="msg-img" onclick="window.open(this.src)">`;
+                if (msg.text) content += `<div>${msg.text}</div>`;
+            } else if (msg.type === 'voice' && msg.file_url) {
+                content += `<audio controls src="${msg.file_url}" class="msg-audio"></audio>`;
             } else {
-                document.title = `Чат | China CRM`;
+                content += msg.text || '';
             }
+
+            html += `
+                <div class="msg ${msg.is_manager ? 'manager' : 'client'}">
+                    ${content}
+                    <span class="msg-time">${msg.time}</span>
+                </div>
+            `;
         });
-    }
-
-    if (chatArea) {
+        chatArea.innerHTML = html;
         chatArea.scrollTop = chatArea.scrollHeight;
-
-        function fetchMessages() {
-            fetch(window.location.href, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                // 1. ОБНОВЛЕНИЕ СООБЩЕНИЙ В ЦЕНТРЕ
-                if (data.messages) {
-                    const currentCount = chatArea.children.length;
-                    if (data.messages.length > currentCount) {
-                        chatArea.innerHTML = ''; 
-                        data.messages.forEach(msg => {
-                            const div = document.createElement('div');
-                            div.className = `msg ${msg.is_manager ? 'manager' : 'client'}`;
-                            div.innerHTML = `${msg.text}<div class="msg-time">${msg.time}</div>`;
-                            chatArea.appendChild(div);
-                        });
-                        chatArea.scrollTop = chatArea.scrollHeight;
-                        
-                        // Если сообщение от клиента (не менеджера), играем звук
-                        const lastMsg = data.messages[data.messages.length - 1];
-                        if (!lastMsg.is_manager) {
-                             notifSound.play().catch(e => console.log("Нужен клик для звука"));
-                        }
-                    }
-                }
-
-                // 2. ОБНОВЛЕНИЕ СЧЕТЧИКА В МЕНЮ
-                if (data.unanswered !== undefined) {
-                    updateSidebarBadge(data.unanswered);
-                    
-                    // Если количество неотвеченных выросло - тоже звук
-                    if (data.unanswered > lastUnansweredCount) {
-                        notifSound.play().catch(e => console.log("Автовоспроизведение заблокировано браузером"));
-                    }
-                    lastUnansweredCount = data.unanswered;
-                }
-            });
-        }
-
-        // Запускаем сразу и потом каждые 2 сек
-        updateSidebarBadge(lastUnansweredCount); 
-        setInterval(fetchMessages, 2000);
+        isFirstLoad = false;
     }
+
+    function renderSidebar(leads) {
+        let html = '';
+        leads.forEach(lead => {
+            const activeClass = lead.active ? 'active' : '';
+            const unread = lead.status === 'new' ? '<span class="unread-dot"></span>' : '';
+            
+            html += `
+            <div class="tg-item ${activeClass}" onclick="window.location.href='/admin/chat/${lead.id}/'">
+                <div class="avatar">${lead.name.charAt(0)}</div>
+                <div class="tg-info">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span class="tg-name">${unread} ${lead.name}</span>
+                        <span style="font-size: 11px; color: #666;">${lead.time}</span>
+                    </div>
+                    <p class="tg-preview">${lead.preview}</p>
+                </div>
+            </div>`;
+        });
+        sidebar.innerHTML = html;
+    }
+
+    function refreshData() {
+        fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(response => response.json())
+        .then(data => {
+            if (data.leads) renderSidebar(data.leads);
+            if (data.messages) renderMessages(data.messages);
+        })
+        .catch(console.error);
+    }
+
+    setInterval(refreshData, 2000);
+    refreshData(); // Запуск сразу
 </script>
+{% endblock %}

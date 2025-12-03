@@ -219,10 +219,21 @@ class Task(models.Model):
         return f"{self.title} ({self.assigned_to})"
 
 
-# --- ВОТ ОН, НАШ НОВЫЙ КЛАСС ДЛЯ ЧАТА ---
 class ChatMessage(models.Model):
+    MESSAGE_TYPES = [
+        ('text', 'Текст'),
+        ('image', 'Фото'),
+        ('voice', 'Голосовое'),
+        ('document', 'Файл'),
+    ]
+
     lead = models.ForeignKey(Lead, on_delete=models.CASCADE, related_name='messages')
-    text = models.TextField("Текст сообщения")
+    text = models.TextField("Текст/Подпись", blank=True, null=True)
+    
+    # Новые поля
+    attachment = models.FileField("Вложение", upload_to='chat_files/', blank=True, null=True)
+    msg_type = models.CharField("Тип", max_length=10, choices=MESSAGE_TYPES, default='text')
+    
     is_from_manager = models.BooleanField("От менеджера?", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -232,4 +243,6 @@ class ChatMessage(models.Model):
         verbose_name_plural = "Сообщения чата"
 
     def __str__(self):
-        direction = "➡️ Менеджер"
+        type_icon = "📷" if self.msg_type == 'image' else "🎤" if self.msg_type == 'voice' else "📝"
+        direction = "➡️" if self.is_from_manager else "⬅️"
+        return f"{direction} {type_icon} {self.text or 'Вложение'}"

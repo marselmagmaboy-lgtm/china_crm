@@ -199,3 +199,7 @@ JAZZMIN_UI_TWEAKS = {
 }
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# --- НАСТРОЙКИ МЕДИА (ФАЙЛОВ) ---
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

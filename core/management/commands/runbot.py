@@ -1,27 +1,26 @@
 import telebot
+import os
+import requests
 from django.core.management.base import BaseCommand
+from django.core.files.base import ContentFile
 from decouple import config
-# Импортируем нашу новую модель ChatMessage
-from core.models import Lead, LeadStatus, ChatMessage 
+from core.models import Lead, LeadStatus, ChatMessage
 
 bot = telebot.TeleBot(config('TELEGRAM_BOT_TOKEN'))
 
 class Command(BaseCommand):
-    help = 'Запуск Telegram бота (Режим прослушки)'
+    help = 'Запуск Telegram бота'
 
     def handle(self, *args, **kwargs):
-        print("🎧 Бот слушает сообщения...")
+        print("🎧 Бот слушает (Текст, Фото, Голосовые)...")
         bot.infinity_polling()
 
-# Обработчик ВСЕХ текстовых сообщений
-@bot.message_handler(func=lambda message: True)
-def handle_message(message):
+# --- ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ПОИСКА ЛИДА ---
+def get_or_create_lead(message):
     user_id = str(message.from_user.id)
     username = message.from_user.username or "Anon"
     first_name = message.from_user.first_name or "Client"
-    text = message.text
-
-    # 1. Ищем или создаем Лида
+    
     lead, created = Lead.objects.get_or_create(
         telegram_id=user_id,
         defaults={
@@ -31,13 +30,51 @@ def handle_message(message):
             'status': LeadStatus.NEW
         }
     )
+    # Если лид был старый, обновляем статус, что он снова написал
+    if not created and lead.status != 'new':
+        lead.status = 'new' # Помечаем как непрочитанное
+        lead.save()
+        
+    return lead
 
-    # 2. СОХРАНЯЕМ СООБЩЕНИЕ В БАЗУ (Вместо автоответа)
-    ChatMessage.objects.create(
-        lead=lead,
-        text=text,
-        is_from_manager=False # Это сообщение от клиента
-    )
+# --- 1. ОБРАБОТКА ТЕКСТА ---
+@bot.message_handler(content_types=['text'])
+def handle_text(message):
+    lead = get_or_create_lead(message)
+    ChatMessage.objects.create(lead=lead, text=message.text, msg_type='text')
+    print(f"📩 Текст от {lead.first_name}")
 
-    print(f"📩 Сообщение от {first_name}: {text}")
-    # Бот молчит, ничего не отправляет в ответ (bot.reply_to удален)
+# --- 2. ОБРАБОТКА ФОТО ---
+@bot.message_handler(content_types=['photo'])
+def handle_photo(message):
+    lead = get_or_create_lead(message)
+    
+    # Берем самое большое фото из доступных размеров
+    file_info = bot.get_file(message.photo[-1].file_id)
+    file_url = f'https://api.telegram.org/file/bot{bot.token}/{file_info.file_path}'
+    
+    # Скачиваем
+    response = requests.get(file_url)
+    
+    if response.status_code == 200:
+        msg = ChatMessage(lead=lead, text=message.caption or "", msg_type='image')
+        # Сохраняем файл в Django
+        file_name = f"photo_{message.message_id}.jpg"
+        msg.attachment.save(file_name, ContentFile(response.content), save=True)
+        print(f"📷 Фото от {lead.first_name}")
+
+# --- 3. ОБРАБОТКА ГОЛОСОВЫХ ---
+@bot.message_handler(content_types=['voice'])
+def handle_voice(message):
+    lead = get_or_create_lead(message)
+    
+    file_info = bot.get_file(message.voice.file_id)
+    file_url = f'https://api.telegram.org/file/bot{bot.token}/{file_info.file_path}'
+    
+    response = requests.get(file_url)
+    
+    if response.status_code == 200:
+        msg = ChatMessage(lead=lead, msg_type='voice')
+        file_name = f"voice_{message.message_id}.ogg"
+        msg.attachment.save(file_name, ContentFile(response.content), save=True)
+        print(f"🎤 Голосовое от {lead.first_name}")

@@ -1,0 +1,111 @@
+{% extends "admin/base.html" %}
+
+{% block extrahead %}
+<style>
+    /* Красная точка */
+    .live-badge {
+        background-color: #ff4b4b; color: white; border-radius: 10px; padding: 2px 7px;
+        font-size: 11px; font-weight: bold; margin-left: 10px; vertical-align: middle;
+        box-shadow: 0 0 8px rgba(255, 75, 75, 0.8); animation: pulse 1.5s infinite; display: inline-block;
+    }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+    /* Уведомление (Toast) */
+    .toast-box {
+        position: fixed; top: 20px; right: -300px; background: #1e1e1e; color: white; border-left: 5px solid #ff4b4b;
+        padding: 15px 20px; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        z-index: 99999; transition: right 0.5s ease; display: flex; align-items: center; gap: 15px; font-family: sans-serif;
+    }
+    .toast-box.show { right: 20px; }
+
+    /* Кнопка включения звука (если заблокировано) */
+    #soundBtn {
+        position: fixed; bottom: 20px; right: 20px; background: #ff4b4b; color: white;
+        padding: 10px 15px; border-radius: 30px; cursor: pointer; display: none; z-index: 99999;
+        font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-family: sans-serif;
+    }
+</style>
+
+<audio id="globalSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
+<div id="liveToast" class="toast-box">
+    <div style="font-size: 24px;">💬</div>
+    <div>
+        <div style="font-weight: bold;">Новое сообщение!</div>
+        <div style="font-size: 12px; color: #ccc;">Клиент ждет ответа</div>
+    </div>
+</div>
+
+<div id="soundBtn">🔇 Включить звук</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const sound = document.getElementById("globalSound");
+        const toast = document.getElementById("liveToast");
+        const soundBtn = document.getElementById("soundBtn");
+        let lastCount = -1;
+
+        // Попытка проиграть звук (с обработкой ошибки)
+        function tryPlaySound() {
+            sound.currentTime = 0;
+            const playPromise = sound.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Звук заблокирован браузером. Показываем кнопку.");
+                    soundBtn.style.display = "block"; // Показываем кнопку спасения
+                });
+            }
+        }
+
+        // Клик по кнопке разблокирует звук навсегда
+        soundBtn.addEventListener("click", function() {
+            sound.play();
+            soundBtn.style.display = "none";
+            alert("Звук включен! Теперь вы будете слышать уведомления.");
+        });
+
+        // Основная функция проверки
+        function checkUnread() {
+            fetch('/api/unread-count/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(response => response.json())
+            .then(data => {
+                const count = data.count;
+                console.log("Непрочитанных:", count); // Для отладки в консоли (F12)
+
+                // 1. Обновляем кружочки в меню
+                const chatLinks = document.querySelectorAll('a[href*="/admin/chat/"]');
+                chatLinks.forEach(link => {
+                    let badge = link.querySelector('.live-badge');
+                    if (count > 0) {
+                        if (!badge) {
+                            badge = document.createElement('span');
+                            badge.className = 'live-badge';
+                            link.appendChild(badge);
+                        }
+                        badge.innerText = count;
+                        document.title = `(${count}) Admin NSRE`;
+                    } else {
+                        if (badge) badge.remove();
+                        document.title = "Admin NSRE";
+                    }
+                });
+
+                // 2. Если стало БОЛЬШЕ - уведомляем
+                if (lastCount !== -1 && count > lastCount) {
+                    // Показываем плашку
+                    toast.classList.add("show");
+                    setTimeout(() => toast.classList.remove("show"), 5000);
+                    
+                    // Играем звук
+                    tryPlaySound();
+                }
+                lastCount = count;
+            })
+            .catch(err => console.error("Ошибка проверки:", err));
+        }
+
+        setInterval(checkUnread, 2000); // Каждые 2 секунды
+    });
+</script>
+{% endblock %}
